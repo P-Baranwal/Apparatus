@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(curl -sS -o /dev/null -w export-results page: %{http_code}\\n --max-time 30 https://www.worldcubeassociation.org/export/results)",
+      "Shell(curl -sS -o /dev/null -w api competitions: %{http_code}\\n --max-time 30 https://www.worldcubeassociation.org/api/v0/competitions?country_iso2=IN&start=2026-01-01&end=2026-12-31)",
+      "Shell(curl -sS -o /dev/null -w wcif wc2025: %{http_code}\\n --max-time 30 https://www.worldcubeassociation.org/api/v0/competitions/WC2025/wcif/public)",
+      "Shell(curl -sS -o /dev/null -w delegates page: %{http_code}\\n --max-time 30 https://www.worldcubeassociation.org/delegates)",
+      "Shell(curl -sS -o /dev/null -w regulations: %{http_code}\\n --max-time 60 https://www.worldcubeassociation.org/regulations/)",
+      "Shell(cd /home/pbaranwal/54 && python3 - <<'EOF' import json, glob, collections # used (event,format) pairs across the 15 chosen comps chosen={\"WC2025\",\"WC2023\",\"RubiksWCAAsianChampionship2024\",\"IndianNationals2023\",\"IndianEliteChampionship2026\",\"CubingATMOSphere2026\",\"IndianFMCChampionship2026\",\"IISERKolkataAutumnOpen2026\",\"BigNBlindBengaluruSep2026\",\"DCHydCubeOpenNovember2026\",\"IndianPBQChampionship2026\",\"CubeXWinterOpenBengaluru2026\",\"MohaliCubeOpen2026\",\"DCHyderabadOpenDecember2024\",\"BengalCubeOpen2025\"} pairs=collections.Counter() for p in glob.glob('scratch/wcif/*.json'): d=json.load(open(p)) if d['id'] not in chosen: continue for e in d['events']: for r in e['rounds']: pairs[(e['id'],r['format'])]+=1 for k in sorted(pairs): print(k,pairs[k]) EOF)",
+      "Shell(cd /home/pbaranwal/54 && python3 - <<'EOF' import re,html h=open('scratch/regs.html',encoding='utf-8').read() txt=re.sub(r'<script.*?</script>','',h,flags=re.S) txt=re.sub(r'<[^>]+>','\\n',txt); txt=html.unescape(txt) lines=[l.strip() for l in txt.split('\\n') if l.strip()] i=next(j for j,l in enumerate(lines) if l=='Article 1: Officials') print('\\n'.join(lines[i:i+55])) EOF)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

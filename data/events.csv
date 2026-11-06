@@ -1,0 +1,22 @@
+Event_ID,Event_Name,Display_Rank,Result_Kind,Status
+333,3x3x3 Cube,10,time,official
+222,2x2x2 Cube,20,time,official
+444,4x4x4 Cube,30,time,official
+555,5x5x5 Cube,40,time,official
+666,6x6x6 Cube,50,time,official
+777,7x7x7 Cube,60,time,official
+333bf,3x3x3 Blindfolded,70,time,official
+333fm,3x3x3 Fewest Moves,80,number,official
+333oh,3x3x3 One-Handed,90,time,official
+clock,Clock,110,time,official
+minx,Megaminx,120,time,official
+pyram,Pyraminx,130,time,official
+skewb,Skewb,140,time,official
+sq1,Square-1,150,time,official
+444bf,4x4x4 Blindfolded,160,time,official
+555bf,5x5x5 Blindfolded,170,time,official
+333mbf,3x3x3 Multi-Blind,180,multi,official
+333ft,3x3x3 With Feet,996,time,retired
+magic,Magic,997,time,retired
+mmagic,Master Magic,998,time,retired
+333mbo,3x3x3 Multi-Blind Old Style,999,multi,retired

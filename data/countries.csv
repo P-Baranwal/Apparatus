@@ -1,0 +1,109 @@
+Country_ID,ISO2,Name,Continent_ID
+Algeria,DZ,Algeria,_Africa
+Angola,AO,Angola,_Africa
+Argentina,AR,Argentina,_South America
+Armenia,AM,Armenia,_Europe
+Australia,AU,Australia,_Oceania
+Austria,AT,Austria,_Europe
+Azerbaijan,AZ,Azerbaijan,_Europe
+Bahrain,BH,Bahrain,_Asia
+Bangladesh,BD,Bangladesh,_Asia
+Belarus,BY,Belarus,_Europe
+Belgium,BE,Belgium,_Europe
+Belize,BZ,Belize,_North America
+Benin,BJ,Benin,_Africa
+Bolivia,BO,Bolivia,_South America
+Bosnia and Herzegovina,BA,Bosnia and Herzegovina,_Europe
+Brazil,BR,Brazil,_South America
+Bulgaria,BG,Bulgaria,_Europe
+Burkina Faso,BF,Burkina Faso,_Africa
+Burundi,BI,Burundi,_Africa
+Canada,CA,Canada,_North America
+Central African Republic,CF,Central African Republic,_Africa
+Chile,CL,Chile,_South America
+China,CN,China,_Asia
+Colombia,CO,Colombia,_South America
+Costa Rica,CR,Costa Rica,_North America
+Cote d_Ivoire,CI,Côte d'Ivoire,_Africa
+Croatia,HR,Croatia,_Europe
+Cyprus,CY,Cyprus,_Europe
+Czech Republic,CZ,Czech Republic,_Europe
+Democratic People_s Republic of Korea,KP,Democratic People's Republic of Korea,_Asia
+Denmark,DK,Denmark,_Europe
+Dominica,DM,Dominica,_North America
+Dominican Republic,DO,Dominican Republic,_North America
+Ecuador,EC,Ecuador,_South America
+Egypt,EG,Egypt,_Africa
+El Salvador,SV,El Salvador,_North America
+Estonia,EE,Estonia,_Europe
+Federated States of Micronesia,FM,Federated States of Micronesia,_Oceania
+Finland,FI,Finland,_Europe
+France,FR,France,_Europe
+Georgia,GE,Georgia,_Europe
+Germany,DE,Germany,_Europe
+Ghana,GH,Ghana,_Africa
+Greece,GR,Greece,_Europe
+Guatemala,GT,Guatemala,_North America
+Honduras,HN,Honduras,_North America
+Hong Kong,HK,"Hong Kong, China",_Asia
+Hungary,HU,Hungary,_Europe
+India,IN,India,_Asia
+Indonesia,ID,Indonesia,_Asia
+Ireland,IE,Ireland,_Europe
+Israel,IL,Israel,_Europe
+Italy,IT,Italy,_Europe
+Japan,JP,Japan,_Asia
+Jordan,JO,Jordan,_Asia
+Kazakhstan,KZ,Kazakhstan,_Asia
+Kenya,KE,Kenya,_Africa
+Korea,KR,Republic of Korea,_Asia
+Kuwait,KW,Kuwait,_Asia
+Kyrgyzstan,KG,Kyrgyzstan,_Asia
+Latvia,LV,Latvia,_Europe
+Lithuania,LT,Lithuania,_Europe
+Luxembourg,LU,Luxembourg,_Europe
+Macau,MO,"Macau, China",_Asia
+Madagascar,MG,Madagascar,_Africa
+Malaysia,MY,Malaysia,_Asia
+Mexico,MX,Mexico,_North America
+Mongolia,MN,Mongolia,_Asia
+Montenegro,ME,Montenegro,_Europe
+Morocco,MA,Morocco,_Africa
+Mozambique,MZ,Mozambique,_Africa
+Nepal,NP,Nepal,_Asia
+Netherlands,NL,Netherlands,_Europe
+New Zealand,NZ,New Zealand,_Oceania
+Nigeria,NG,Nigeria,_Africa
+North Macedonia,MK,North Macedonia,_Europe
+Norway,NO,Norway,_Europe
+Pakistan,PK,Pakistan,_Asia
+Palestine,PS,Palestine,_Asia
+Panama,PA,Panama,_North America
+Paraguay,PY,Paraguay,_South America
+Peru,PE,Peru,_South America
+Philippines,PH,Philippines,_Asia
+Poland,PL,Poland,_Europe
+Portugal,PT,Portugal,_Europe
+Romania,RO,Romania,_Europe
+Russia,RU,Russia,_Europe
+Serbia,RS,Serbia,_Europe
+Singapore,SG,Singapore,_Asia
+Slovakia,SK,Slovakia,_Europe
+Slovenia,SI,Slovenia,_Europe
+South Africa,ZA,South Africa,_Africa
+Spain,ES,Spain,_Europe
+Sri Lanka,LK,Sri Lanka,_Asia
+Sweden,SE,Sweden,_Europe
+Switzerland,CH,Switzerland,_Europe
+Taiwan,TW,Chinese Taipei,_Asia
+Thailand,TH,Thailand,_Asia
+Turkey,TR,Turkey,_Europe
+USA,US,United States,_North America
+Ukraine,UA,Ukraine,_Europe
+United Kingdom,GB,United Kingdom,_Europe
+Uruguay,UY,Uruguay,_South America
+Uzbekistan,UZ,Uzbekistan,_Asia
+Vatican City,VA,Vatican City,_Europe
+Venezuela,VE,Venezuela,_South America
+Vietnam,VN,Vietnam,_Asia
+Zimbabwe,ZW,Zimbabwe,_Africa

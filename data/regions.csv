@@ -1,0 +1,55 @@
+Region_ID,Region_Name,Parent_Region_ID
+3,Europe,
+4,USA & Canada,
+5,Latin America,
+7,Oceania,
+8,Africa,
+9,Asia West & South,
+10,Central Eurasia,
+12,Asia West,9
+13,Asia South,9
+14,Nordics & Baltics,3
+15,Central Europe,3
+16,"Poland, Czechia & Slovakia",3
+17,Western Europe,3
+18,Eastern Europe,3
+19,UK & Ireland,3
+20,Southern Europe,3
+21,Victoria & Tasmania,7
+22,New South Wales & Australian Capital Territory (ACT),7
+23,South Australia,7
+24,Western Australia & The Northern Territory,7
+25,Queensland,7
+26,New Zealand,7
+27,Canada,4
+28,Pacific Northwest,4
+29,West,4
+30,Rocky Mountain,4
+31,South,4
+32,Southeast,4
+33,Mid-Atlantic,4
+34,New England,4
+35,Great Lakes,4
+36,Heartland,4
+37,World,
+38,Asia Japan,
+39,Asia Southeast & India,
+40,Asia West & India,
+41,Europe East & Middle East,
+42,Europe North & Baltic States,
+48,Mexico and Central America,5
+49,South America (Central),5
+50,South America (North),5
+51,South America (South),5
+52,Asia East,103
+53,Japan,103
+103,Asia East & Southeast,
+104,Asia Southeast,103
+114,Canada (West),4
+115,Canada (East),4
+116, Brazil (North and Northeast),5
+117,Brazil (Center-West),5
+118,Brazil (South),5
+119,Brazil (Southeast),5
+120,Iberia,3
+121,France,3

@@ -1,0 +1,7 @@
+Format_ID,Format_Name,Expected_Attempts,Sort_By,Trimmed_Per_Side
+1,Best of 1,1,single,0
+2,Best of 2,2,single,0
+3,Best of 3,3,single,0
+5,Best of 5,5,single,0
+a,Average of 5,5,average,1
+m,Mean of 3,3,average,0
