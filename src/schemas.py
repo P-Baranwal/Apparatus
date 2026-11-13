@@ -56,13 +56,15 @@ class PersonDetail(BaseModel):
     country_name: str
     since_date: date | None
     delegate_status: DelegateStatus | None
+    competitions_count: int
+    podiums_count: int
     personal_records: list[PersonalRecord]
 
 
 class PersonResultItem(BaseModel):
     result_id: str
     competition_id: str
-    competition_name: str
+    competition_name: str | None
     event_id: str
     round_number: int
     position: int | None
@@ -71,6 +73,14 @@ class PersonResultItem(BaseModel):
     single_record: str | None
     average_record: str | None
     country_id: str
+    solves: list[int]
+
+
+class EventItem(BaseModel):
+    event_id: str
+    event_name: str
+    result_kind: str
+    status: str
 
 
 # --- reads: competitions --------------------------------------------------

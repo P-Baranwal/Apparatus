@@ -74,7 +74,11 @@ def list_persons(
 
 
 def get_person(person_ref: Union[int, str]) -> dict:
-    """`person_ref` is a Person_No or a WCA ID; both resolve to one person."""
+    """`person_ref` is a Person_No or a WCA ID; both resolve to one person.
+
+    Must also return `competitions_count` and `podiums_count`, computed in the
+    database, so the person page can show the summary table the WCA site has.
+    """
     raise NotImplementedError
 
 
@@ -99,6 +103,10 @@ def list_rankings(
 
 
 def list_countries() -> list:
+    raise NotImplementedError
+
+
+def get_country(country_id: str) -> dict:
     raise NotImplementedError
 
 

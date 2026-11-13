@@ -1,11 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Apparatus</title>
-  </head>
-  <body>
-    <p>WCA-inspired course project. Frontend arrives in Phase 4 of the plan.</p>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>World Cube Association</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header data-shell="header"></header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>World Cube Association</h1>
+      <p>
+        The World Cube Association governs competitions for mechanical puzzles that are
+        operated by twisting groups of pieces, commonly known as “twisty puzzles”.
+        This is a course project modelled on its website.
+      </p>
+      <form class="header-search" role="search" action="/search.html">
+        <label class="skip-link" for="hero-q">Search</label>
+        <input id="hero-q" type="search" name="q" placeholder="Search competitions, persons, WCA IDs" />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </section>
+
+  <main id="main">
+    <div class="container">
+      <div class="tile-grid">
+        <a class="tile" href="/competitions.html">
+          <h2>Competitions</h2>
+          <p>Browse upcoming, past and cancelled competitions, filter by region and sort by date or size.</p>
+        </a>
+        <a class="tile" href="/persons.html">
+          <h2>Persons</h2>
+          <p>Find competitors by name or WCA ID, with competition and podium counts.</p>
+        </a>
+        <a class="tile" href="/rankings.html">
+          <h2>Rankings</h2>
+          <p>World, continental and national ranks for every official event.</p>
+        </a>
+        <a class="tile" href="/records.html">
+          <h2>Records</h2>
+          <p>World, continental and national record counts across the dataset.</p>
+        </a>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="section-title">
+            <h2>Latest competitions</h2>
+            <a href="/competitions.html">All competitions</a>
+          </div>
+          <div id="latest-competitions"></div>
+        </div>
+        <div class="col">
+          <div class="section-title">
+            <h2>Medal table</h2>
+            <a href="/stats.html">Statistics</a>
+          </div>
+          <div id="medal-table"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer data-shell="footer"></footer>
+  <script type="module" src="/js/pages/home.js"></script>
+</body>
 </html>

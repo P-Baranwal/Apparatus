@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rankings | World Cube Association</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header data-shell="header"></header>
+  <main id="main">
+    <div class="container">
+      <div class="page-head">
+        <h1>Rankings</h1>
+        <p class="muted small" id="result-count"></p>
+      </div>
+      <form class="filters card" id="filters">
+        <div class="field">
+          <label for="event">Event</label>
+          <select id="event" name="event"></select>
+        </div>
+        <div class="field">
+          <label for="kind">Type</label>
+          <select id="kind" name="type">
+            <option value="single">Single</option>
+            <option value="average">Average</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="continent">Region</label>
+          <select id="continent" name="continent_id"><option value="">World</option></select>
+        </div>
+        <div class="field">
+          <label for="country">Country</label>
+          <select id="country" name="country_id"><option value="">All countries</option></select>
+        </div>
+      </form>
+      <div id="results"></div>
+      <div id="pagination"></div>
+    </div>
+  </main>
+  <footer data-shell="footer"></footer>
+  <script type="module" src="/js/pages/rankings.js"></script>
+</body>
+</html>
