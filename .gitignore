@@ -3,3 +3,6 @@
 __pycache__/
 *.pyc
 .env
+./AGENTS.md
+./INSTRUCTIONS.md
+./phase4_backend_frontend_plan.md
