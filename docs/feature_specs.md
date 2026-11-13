@@ -23,10 +23,11 @@ database.
 | `get_competition` | `(competition_id: str) -> dict` | `CompetitionDetail` (events, delegates, organizers, podiums) |
 | `list_competition_results` | `(competition_id: str, event_id=None, round_number=None, tab="podiums", sort=None, page=1, page_size=20) -> dict` | list of `CompetitionResultItem` |
 | `list_persons` | `(q=None, country_id=None, sort="name", page=1, page_size=20) -> dict` | list of `PersonListItem` |
-| `get_person` | `(person_ref: int\|str) -> dict` | `PersonDetail` (personal records included) |
+| `get_person` | `(person_ref: int\|str) -> dict` | `PersonDetail` (competition/podium counts and personal records included) |
 | `list_person_results` | `(person_ref: int\|str, event_id=None, page=1, page_size=20) -> dict` | list of `PersonResultItem` |
 | `list_rankings` | `(event_id: str, kind: str = "single", country_id=None, continent_id=None, page=1, page_size=100) -> dict` | list of `RankingItem` |
 | `list_countries` | `() -> list[dict]` | `CountryItem` |
+| `get_country` | `(country_id: str) -> dict` | `CountryItem`; `NotFound` |
 | `list_events` | `(include_retired: bool = False) -> list[dict]` | `{event_id, event_name, result_kind, status}` |
 | `list_registrations` | `(competition_id: str, status=None, page=1, page_size=100) -> dict` | list of `RegistrationItem` |
 | `get_registration` | `(competition_id: str, registrant_no: int) -> dict` | `RegistrationItem` |
@@ -155,7 +156,8 @@ parameter and is never formatted into the query.
 - **Endpoint:** `GET /api/countries/{country_id}/persons?sort=`, and reuse
   `GET /api/competitions?country_id=`
 - **Inputs:** `country_id` (path), `sort` (whitelist keys of `PERSON_SORTS`), paging
-- **Data layer:** `list_persons(country_id=...)`, `list_competitions(country_id=...)`
+- **Data layer:** `list_persons(country_id=...)`, `list_competitions(country_id=...)`,
+  `get_country(country_id)` for the header
 - **Success:** country header (name, ISO2, continent), its persons table (name, WCA ID,
   competitions, podiums) and its competitions table
 - **Failure:** unknown country → 404 `"Country not found."`
@@ -180,9 +182,10 @@ parameter and is never formatted into the query.
 ### F8 `[W]` Register a person for a competition
 
 - **Type:** create
-- **UI location:** `register.html?id=DCHydCubeOpenNovember2026`, linked from the
-  competition page when registration is open
-- **Trigger:** choosing a person, ticking events, submitting
+- **UI location:** `competition.html?id=DCHydCubeOpenNovember2026&tab=registrations`, the
+  "Register a person" form under the registrations table (the WCA site uses a separate
+  `/register` page behind login; we keep the form next to the list it changes)
+- **Trigger:** searching for a person, picking them, ticking events, submitting
 - **Endpoint:** `POST /api/competitions/{competition_id}/registrations`
 - **Inputs (Pydantic `RegistrationCreate`):** `person_no` ≥ 1, `events` 1-17 event ids,
   `guests` 0-10
@@ -269,8 +272,9 @@ parameter and is never formatted into the query.
   `accepted|waiting_list|pending|cancelled|rejected`
 - **Data layer:** `set_registration_status(...)`; inside the same transaction, whenever a
   place is available (`accepted` count < `Competitor_Limit`) and a `waiting_list`
-  registration exists, the earliest one (ordered by `Registered_At` then `Registrant_No`)
-  is promoted to `accepted`. One promotion per freed place, until the limit is reached.
+  registration exists, the earliest one (ordered by `Registered_At` then `Registrant_No`,
+  excluding the registration being changed) is promoted to `accepted`. One promotion per
+  freed place, until the limit is reached.
 - **Success:** 200 with `{registration, promoted}`; toast names the promoted person when
   there is one
 - **Failure:** unknown status → 422; no change → `BadInput` "This registration already
