@@ -1,25 +1,14 @@
 """DEV ONLY - delete before submission.
 
 Runs the data-layer contract against whichever implementation USE_MOCK selects.
-Against the real layer, set USE_MOCK unset and drop the `reset` fixture.
+conftest.py resets the mock fixtures, or snapshots and restores the real tables,
+before every test.
 """
-
-import os
 
 import pytest
 
 import data
 from errors import BadInput, Conflict, NotFound
-
-USING_MOCK = os.getenv("USE_MOCK") == "1"
-
-
-@pytest.fixture(autouse=True)
-def reset():
-    """Isolate every test: the mock mutates fixtures in place."""
-    if USING_MOCK:
-        data.mock._reset()
-    yield
 
 
 def test_search_groups_competitions_and_persons():

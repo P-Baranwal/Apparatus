@@ -206,7 +206,7 @@ COMMIT;
 INSERT INTO staff_role (Role_Code, Description, Regulation_Ref) VALUES
 ('judge', 'Judge', '1e'),
 ('scrambler', 'Scrambler', '1f'),
-('runner', 'Runner', NULL),
+('runner', 'Runner', ''),
 ('score_taker', 'Score taker', '1g'),
 ('announcer', 'Announcer', '1l');
 COMMIT;

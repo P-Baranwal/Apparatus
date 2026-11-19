@@ -1,9 +1,7 @@
-"""DEV ONLY - delete before submission (runs against the mock while USE_MOCK=1).
+"""DEV ONLY - delete before submission (mock when USE_MOCK=1, real otherwise).
 
 Status codes, the {detail, code} error shape and query validation at the edge.
 """
-
-import os
 
 import pytest
 from fastapi.testclient import TestClient
@@ -11,19 +9,8 @@ from fastapi.testclient import TestClient
 from app import app
 from errors import NotFound
 
-USING_MOCK = os.getenv("USE_MOCK") == "1"
-
 # raise_server_exceptions=False so the catch-all 500 handler can be asserted.
 client = TestClient(app, raise_server_exceptions=False)
-
-
-@pytest.fixture(autouse=True)
-def reset():
-    if USING_MOCK:
-        import data
-
-        data.mock._reset()
-    yield
 
 
 def test_every_documented_route_exists():
