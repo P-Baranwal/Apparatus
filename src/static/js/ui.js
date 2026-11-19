@@ -134,7 +134,7 @@ export function renderShell({ active = "", home = false } = {}) {
         <nav class="site-nav" id="site-nav" aria-label="Main">${nav}</nav>
         <form class="header-search" role="search" action="/search.html">
           <label class="skip-link" for="global-q">Search</label>
-          <input id="global-q" type="search" name="q" placeholder="Search competitions and persons" autocomplete="off" />
+          <input id="global-q" type="search" name="q" placeholder="Search competitions" autocomplete="off" />
           <button type="submit">Search</button>
         </form>
       </div>`;

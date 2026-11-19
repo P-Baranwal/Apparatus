@@ -1,0 +1,898 @@
+% Code inventory for the Team 54 WCA-inspired application (src/ plus scripts/).
+% Lists every project .py file, its path, what it contains, and its exact
+% function signatures. Virtualenv and cached files are excluded on purpose.
+%
+% Build: pdflatex code_inventory.tex  (run twice for the table of contents)
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{underscore}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  breakatwhitespace=false,
+  frame=single,
+  framesep=4pt,
+  rulecolor=\color{black!30},
+  backgroundcolor=\color{black!3},
+  aboveskip=4pt,
+  belowskip=8pt,
+  showstringspaces=false
+}
+
+\newcommand{\filepath}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\role}[1]{\par\smallskip\noindent\textbf{Role.} #1\par}
+\newcommand{\filesize}[1]{\par\smallskip\noindent\textbf{Size.} #1 lines\par}
+\newcommand{\contents}[1]{\par\smallskip\noindent\textbf{Contains.} #1\par\smallskip}
+
+\title{Code Inventory\\\large Team 54 --- WCA-inspired mini-world application}
+\author{Generated from the repository at commit \texttt{818b78a}}
+\date{18 November 2026}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+This document inventories every Python source file that belongs to the
+project (everything under \filepath{scripts/} and \filepath{src/} except the
+virtualenv and \filepath{__pycache__}). For each file it gives the path, a
+one-paragraph description of what the file contains, and the exact
+signatures of every function defined in it. Signatures are copied verbatim
+from the source, including type hints, default values and FastAPI
+\texttt{Query}/\texttt{Body} declarations. Line numbers in comments
+(\texttt{\# Lnn}) point at the \texttt{def} statement.
+
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------------------------------
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+\begin{longtable}{@{}p{0.46\textwidth} r p{0.40\textwidth}@{}}
+\toprule
+\textbf{File} & \textbf{Lines} & \textbf{Kind} \\
+\midrule
+\endhead
+\filepath{scripts/make_mock_data.py}          & 173 & Dev-only fixture generator \\
+\filepath{src/app.py}                         & 19  & FastAPI application object \\
+\filepath{src/config.py}                      & 7   & Environment settings \\
+\filepath{src/data/__init__.py}               & 8   & Mock/real implementation switch \\
+\filepath{src/data/mock.py}                   & 1159& Dev-only in-memory data layer \\
+\filepath{src/data/real.py}                   & 164 & Real database layer (stubs) \\
+\filepath{src/errors.py}                      & 51  & Domain errors and handlers \\
+\filepath{src/routers/__init__.py}            & 0   & Empty package marker \\
+\filepath{src/routers/competitions.py}        & 123 & Competition endpoints \\
+\filepath{src/routers/lookups.py}             & 36  & Country and event endpoints \\
+\filepath{src/routers/persons.py}             & 46  & Person endpoints \\
+\filepath{src/routers/rankings.py}            & 27  & Rankings endpoint \\
+\filepath{src/routers/search.py}              & 14  & Global search endpoint \\
+\filepath{src/routers/stats.py}               & 29  & Statistics endpoints \\
+\filepath{src/schemas.py}                     & 296 & Pydantic request/response models \\
+\filepath{src/serialization.py}               & 18  & JSON-safe value converter \\
+\filepath{src/tests/test_api.py}              & 229 & HTTP/API tests \\
+\filepath{src/tests/test_contract.py}         & 366 & Data-layer contract tests \\
+\bottomrule
+\end{longtable}
+
+\noindent
+Total: 18 Python files, 2765 lines.
+
+\newpage
+
+% ---------------------------------------------------------------------------
+\section{\filepath{scripts/make_mock_data.py}}
+
+\noindent\textbf{Path.} \filepath{scripts/make_mock_data.py}
+\filesize{173}
+\role{Development-only script (deleted before submission). It reads the
+delivered WCA-shaped CSVs from \filepath{data/} and writes one JSON fixture per
+table into \filepath{src/mock\_data/}. A module-level \texttt{SPEC} dictionary
+declares, for each table, the exact column set and a coercion type
+(\texttt{INT}, \texttt{FLOAT}, \texttt{BOOL}, \texttt{STR}). Confidential
+columns are not copied, so they can never reach the UI. Run with
+\texttt{uv run -{}-no-project python scripts/make\_mock\_data.py}.}
+\contents{The \texttt{SPEC} table/column schema, three helper functions and a
+\texttt{\_\_main\_\_} guard.}
+
+\begin{lstlisting}
+def coerce(raw, kind):                                    # L140
+
+def build(table, columns):                                # L152
+
+def main():                                               # L161
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/app.py}}
+
+\noindent\textbf{Path.} \filepath{src/app.py}
+\filesize{19}
+\role{FastAPI entry point. Creates the \texttt{FastAPI} application, registers
+the error handlers from \filepath{errors.py}, includes the six routers
+(\texttt{search}, \texttt{competitions}, \texttt{persons}, \texttt{rankings},
+\texttt{lookups}, \texttt{stats}) under the \texttt{/api} prefix, and finally
+mounts \filepath{static/} with \texttt{html=True} so that \texttt{index.html}
+is served at \texttt{/} and \filepath{404.html} catches unknown paths. The
+static mount is deliberately last so the API routes win.}
+\contents{Module-level application wiring only: \texttt{BASE}, \texttt{app} and
+the router-inclusion loop.}
+
+\noindent\textbf{Defines no functions.}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/config.py}}
+
+\noindent\textbf{Path.} \filepath{src/config.py}
+\filesize{7}
+\role{Database connection settings read from environment variables with safe
+defaults: \texttt{DB\_HOST} (\texttt{localhost}), \texttt{DB\_PORT}
+(\texttt{3306}), \texttt{DB\_USER} (\texttt{root}), \texttt{DB\_PASSWORD}
+(empty) and \texttt{DB\_NAME} (\texttt{miniworld}). Every other module takes
+credentials from here, never from literals.}
+\contents{Module-level constants only.}
+
+\noindent\textbf{Defines no functions.}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/data/__init__.py}}
+
+\noindent\textbf{Path.} \filepath{src/data/\_\_init\_\_.py}
+\filesize{8}
+\role{The single switch between the mock and the real data layer. It imports
+\texttt{data.mock} when \texttt{USE\_MOCK=1} and \texttt{data.real} otherwise,
+then re-exports every public attribute of the chosen module through a
+module-level \texttt{\_\_getattr\_\_}. Callers write \texttt{import data} and
+\texttt{data.list\_competitions(...)}; the implementation is invisible to
+routers and tests.}
+\contents{One dispatch variable and one dunder accessor.}
+
+\begin{lstlisting}
+def __getattr__(name):                                    # L7
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/data/real.py}}
+
+\noindent\textbf{Path.} \filepath{src/data/real.py}
+\filesize{164}
+\role{The real data layer. This is the only file allowed to contain raw SQL
+(or MQL/Cypher) and the only place where driver exceptions are translated into
+the domain errors \texttt{NotFound}, \texttt{Conflict} and \texttt{BadInput}.
+The signatures are final and match \filepath{docs/feature\_specs.md}; the
+bodies currently raise \texttt{NotImplementedError} and will be filled in once
+the database teammate delivers the schema. It also declares the three sort
+whitelists (\texttt{COMPETITION\_SORTS}, \texttt{PERSON\_SORTS},
+\texttt{RESULT\_SORTS}) that keep \texttt{ORDER BY} clauses out of user
+control.}
+\contents{Three whitelist dictionaries, 16 read functions and 4 write
+functions, all typed.}
+
+\subsection*{Reads}
+\begin{lstlisting}
+def search_all(q: str, limit: int = 5) -> dict:                                 # L32
+
+def list_competitions(
+    q: Optional[str] = None,
+    country_id: Optional[str] = None,
+    continent_id: Optional[str] = None,
+    year: Optional[int] = None,
+    status: Optional[str] = None,
+    event_id: Optional[str] = None,
+    sort: str = "date_desc",
+    page: int = 1,
+    page_size: int = 20,
+) -> dict:                                                                      # L36
+
+def get_competition(competition_id: str) -> dict:                               # L50
+
+def list_competition_results(
+    competition_id: str,
+    event_id: Optional[str] = None,
+    round_number: Optional[int] = None,
+    tab: str = "podiums",
+    sort: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 20,
+) -> dict:                                                                      # L54
+
+def list_persons(
+    q: Optional[str] = None,
+    country_id: Optional[str] = None,
+    sort: str = "name",
+    page: int = 1,
+    page_size: int = 20,
+) -> dict:                                                                      # L66
+
+def get_person(person_ref: Union[int, str]) -> dict:                            # L76
+
+def list_person_results(
+    person_ref: Union[int, str],
+    event_id: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 20,
+) -> dict:                                                                      # L85
+
+def list_rankings(
+    event_id: str,
+    kind: str = "single",
+    country_id: Optional[str] = None,
+    continent_id: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 100,
+) -> dict:                                                                      # L94
+
+def list_countries() -> list:                                                   # L105
+
+def get_country(country_id: str) -> dict:                                       # L109
+
+def list_events(include_retired: bool = False) -> list:                         # L113
+
+def list_registrations(
+    competition_id: str,
+    status: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 100,
+) -> dict:                                                                      # L117
+
+def get_registration(competition_id: str, registrant_no: int) -> dict:          # L126
+
+def stats_medals() -> list:                                                     # L130
+
+def stats_competitions_by_country_year(
+    year_from: Optional[int] = None, year_to: Optional[int] = None
+) -> list:                                                                      # L134
+
+def stats_records() -> list:                                                    # L140
+\end{lstlisting}
+
+\subsection*{Writes}
+\begin{lstlisting}
+def create_registration(
+    competition_id: str, person_no: int, event_ids: list, guests: int = 0
+) -> dict:                                                                      # L147
+
+def set_registration_status(
+    competition_id: str, registrant_no: int, status: str
+) -> dict:                                                                      # L153
+
+def delete_registration(competition_id: str, registrant_no: int) -> None:       # L159
+
+def update_person_country(person_ref: Union[int, str], country_id: str) -> dict: # L163
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/data/mock.py}}
+
+\noindent\textbf{Path.} \filepath{src/data/mock.py}
+\filesize{1159}
+\role{Development-only in-memory implementation of the exact same contract as
+\filepath{real.py} (deleted before submission). It loads the JSON fixtures from
+\filepath{src/mock\_data/} with \texttt{lru\_cache}, mutates them in place for
+writes, and may filter, sort and paginate in Python --- something the real
+layer must never do. It reproduces pagination bounds, the sort whitelist, tie
+handling in rankings, waiting-list promotion and every \texttt{NotFound} /
+\texttt{Conflict} / \texttt{BadInput} case, so the routers and the tests run
+unchanged against either layer.}
+\contents{53 module-level functions plus 3 nested helpers: cached fixture
+accessors, row-shaping helpers, the 20 contract functions mirroring
+\filepath{real.py}, and a cache-reset hook used by the test fixtures.}
+
+\subsection*{Fixture loading and cache control}
+\begin{lstlisting}
+def _load(table):                                         # L23
+def _reset():                                             # L27
+def _reset_derived():                                     # L1143
+\end{lstlisting}
+
+\subsection*{Generic helpers}
+\begin{lstlisting}
+def _as_date(value):                                      # L36
+def _as_datetime(value):                                  # L42
+def _competition_status(comp):                            # L48
+def _matches(value, needle):                              # L60
+def _page(rows, page, page_size):                          # L68
+def _sort_key(sorts, sort, default):                       # L79
+\end{lstlisting}
+
+\subsection*{Cached lookup tables}
+\begin{lstlisting}
+def _persons():                                           # L91
+def _countries():                                         # L96
+def _continents():                                        # L101
+def _events():                                            # L106
+def _formats():                                           # L111
+def _competitions():                                      # L116
+def _championship_types():                                # L121
+def _delegate_status():                                   # L126
+def _final_rounds():                                      # L159
+def _attempts_by_result():                                # L168
+def _selects_by_registration():                           # L178
+def _registered_counts():                                 # L188
+def _person_stats():                                      # L505
+\end{lstlisting}
+
+\subsection*{Row shaping and resolution}
+\begin{lstlisting}
+def _resolve_person(person_ref):                          # L130
+def _person_name(person_no):                              # L144
+def _country_name(country_id):                            # L149
+def _result_key(result):                                  # L154
+def _competition_row(comp):                               # L197
+def _competition_results(
+    competition_id, event_id=None, round_number=None, tab="podiums"
+):                                                        # L422
+def _personal_records(person_no):                         # L551
+def _registration_row(reg):                               # L807
+def _competition_for_write(competition_id):               # L934
+def _is_registration_open(comp):                          # L941
+def _offered_events(competition_id):                      # L954
+\end{lstlisting}
+
+\subsection*{Contract: reads (mirrors \filepath{real.py})}
+\begin{lstlisting}
+def search_all(q, limit=5):                               # L219
+
+def list_competitions(
+    q=None,
+    country_id=None,
+    continent_id=None,
+    year=None,
+    status=None,
+    event_id=None,
+    sort="date_desc",
+    page=1,
+    page_size=20,
+):                                                        # L262
+
+def get_competition(competition_id):                      # L314
+
+def list_competition_results(
+    competition_id,
+    event_id=None,
+    round_number=None,
+    tab="podiums",
+    sort=None,
+    page=1,
+    page_size=20,
+):                                                        # L462
+
+def list_persons(q=None, country_id=None, sort="name", page=1, page_size=20):  # L520
+
+def get_person(person_ref):                               # L631
+
+def list_person_results(person_ref, event_id=None, page=1, page_size=20):      # L650
+
+def list_rankings(
+    event_id, kind="single", country_id=None, continent_id=None, page=1, page_size=100
+):                                                        # L683
+
+def list_countries():                                     # L770
+def get_country(country_id):                              # L783
+def list_events(include_retired=False):                   # L790
+
+def list_registrations(competition_id, status=None, page=1, page_size=100):    # L825
+
+def get_registration(competition_id, registrant_no):      # L837
+
+def stats_medals():                                       # L847
+def stats_competitions_by_country_year(year_from=None, year_to=None):          # L879
+def stats_records():                                      # L902
+\end{lstlisting}
+
+\subsection*{Contract: writes}
+\begin{lstlisting}
+def create_registration(competition_id, person_no, event_ids, guests=0):       # L960
+
+def set_registration_status(competition_id, registrant_no, status):            # L1022
+
+def delete_registration(competition_id, registrant_no):                        # L1074
+
+def update_person_country(person_ref, country_id):                             # L1117
+\end{lstlisting}
+
+\subsection*{Nested helpers}
+\begin{lstlisting}
+# inside get_competition
+def people(pairs):                                        # L356
+
+# inside _personal_records
+def count_better(event, value, key, scope=None):          # L579
+
+# inside list_rankings
+def in_scope(row):                                        # L708
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/errors.py}}
+
+\noindent\textbf{Path.} \filepath{src/errors.py}
+\filesize{51}
+\role{The domain error hierarchy and the three exception handlers that turn
+errors into the uniform JSON body \texttt{\{"detail": ..., "code": ...\}}. The
+base class \texttt{AppError} carries a \texttt{status\_code},
+\texttt{detail} and machine-readable \texttt{code}; \texttt{NotFound} maps to
+404, \texttt{Conflict} to 409 and \texttt{BadInput} to 422.
+\texttt{RequestValidationError} is flattened into one human sentence, and an
+unhandled exception is logged and returned as a generic 500 so no driver
+detail escapes.}
+\contents{Three exception classes plus \texttt{register\_error\_handlers},
+which installs three nested handler coroutines on the app.}
+
+\begin{lstlisting}
+class AppError(Exception):                                # L10
+    def __init__(self, detail: str, code: str | None = None):   # L13
+
+class NotFound(AppError):                                 # L17
+class Conflict(AppError):                                 # L21
+class BadInput(AppError):                                 # L25
+
+def register_error_handlers(app):                         # L29
+    # nested inside register_error_handlers
+    async def app_error(_, exc: AppError):                # L31
+    async def validation_error(_, exc: RequestValidationError):  # L37
+    async def fallback(_, exc: Exception):                # L46
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/routers/__init__.py}}
+
+\noindent\textbf{Path.} \filepath{src/routers/\_\_init\_\_.py}
+\filesize{0}
+\role{Empty file that marks \filepath{routers/} as a package so
+\texttt{from routers import ...} works.}
+\contents{Nothing.}
+
+\noindent\textbf{Defines no functions.}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/routers/competitions.py}}
+
+\noindent\textbf{Path.} \filepath{src/routers/competitions.py}
+\filesize{123}
+\role{All competition endpoints. Every handler validates its query parameters
+at the edge with FastAPI \texttt{Query} bounds and enum hints, delegates
+straight to \texttt{data.*}, and declares its response model so the OpenAPI
+schema is exact. Covers the list with filters and sort, the detail page,
+results with three tabs, registration listing/reading, and the three
+registration writes (create with a \texttt{Location} header, status change, and
+delete with a 204).}
+\contents{One \texttt{APIRouter} with \texttt{tags=["competitions"]} and eight
+route functions.}
+
+\begin{lstlisting}
+@router.get("/competitions", response_model=schemas.Page[schemas.CompetitionListItem])
+def list_competitions(
+    q: Optional[str] = Query(default=None, max_length=60),
+    country_id: Optional[str] = Query(default=None, max_length=60),
+    continent_id: Optional[str] = Query(default=None, max_length=20),
+    year: Optional[int] = Query(default=None, ge=2003, le=2100),
+    status: Optional[schemas.CompetitionStatus] = None,
+    event_id: Optional[str] = Query(default=None, max_length=10),
+    sort: str = Query(default="date_desc", max_length=20),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+):                                                        # L12
+
+@router.get("/competitions/{competition_id}", response_model=schemas.CompetitionDetail)
+def get_competition(competition_id: str):                 # L37
+
+@router.get("/competitions/{competition_id}/results",
+            response_model=schemas.Page[schemas.CompetitionResultItem])
+def list_competition_results(
+    competition_id: str,
+    tab: str = Query(default="podiums", pattern="^(podiums|all|by_person)$"),
+    event_id: Optional[str] = Query(default=None, max_length=10),
+    round_number: Optional[int] = Query(default=None, ge=1, le=10),
+    sort: Optional[str] = Query(default=None, max_length=20),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+):                                                        # L45
+
+@router.get("/competitions/{competition_id}/registrations",
+            response_model=schemas.Page[schemas.RegistrationItem])
+def list_registrations(
+    competition_id: str,
+    status: Optional[schemas.RegistrationStatus] = None,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=100, ge=1, le=100),
+):                                                        # L69
+
+@router.get("/competitions/{competition_id}/registrations/{registrant_no}",
+            response_model=schemas.RegistrationItem)
+def get_registration(competition_id: str, registrant_no: int):   # L83
+
+@router.post("/competitions/{competition_id}/registrations",
+             response_model=schemas.RegistrationItem,
+             status_code=status.HTTP_201_CREATED)
+def create_registration(
+    competition_id: str, payload: schemas.RegistrationCreate, response: Response
+):                                                        # L92
+
+@router.patch("/competitions/{competition_id}/registrations/{registrant_no}",
+              response_model=schemas.RegistrationChange)
+def set_registration_status(
+    competition_id: str, registrant_no: int, payload: schemas.RegistrationStatusUpdate
+):                                                        # L109
+
+@router.delete("/competitions/{competition_id}/registrations/{registrant_no}",
+               status_code=status.HTTP_204_NO_CONTENT)
+def delete_registration(competition_id: str, registrant_no: int):   # L121
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/routers/lookups.py}}
+
+\noindent\textbf{Path.} \filepath{src/routers/lookups.py}
+\filesize{36}
+\role{Reference-data endpoints used to populate filter dropdowns and the
+entity-specific country page: the country list, one country, all persons for
+one country, and the event list (official only by default,
+\texttt{include\_retired=true} to include historical events).}
+\contents{One \texttt{APIRouter} with \texttt{tags=["lookups"]} and four route
+functions.}
+
+\begin{lstlisting}
+@router.get("/countries", response_model=list[schemas.CountryItem])
+def list_countries():                                     # L10
+
+@router.get("/countries/{country_id}", response_model=schemas.CountryItem)
+def get_country(country_id: str):                         # L15
+
+@router.get("/countries/{country_id}/persons",
+            response_model=schemas.Page[schemas.PersonListItem])
+def list_country_persons(
+    country_id: str,
+    sort: str = Query(default="name", max_length=20),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+):                                                        # L23
+
+@router.get("/events", response_model=list[schemas.EventItem])
+def list_events(include_retired: bool = False):           # L35
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/routers/persons.py}}
+
+\noindent\textbf{Path.} \filepath{src/routers/persons.py}
+\filesize{46}
+\role{Person endpoints: the searchable, sortable person list; the person
+detail page (personal records with world/continental/national ranks plus
+competition and podium counts); the person's full result history; and the
+secondary write that changes a person's represented country. The
+\texttt{\{person\_ref\}} path segment accepts either a numeric
+\texttt{Person\_No} or a WCA ID, which the data layer resolves.}
+\contents{One \texttt{APIRouter} with \texttt{tags=["persons"]} and four route
+functions.}
+
+\begin{lstlisting}
+@router.get("/persons", response_model=schemas.Page[schemas.PersonListItem])
+def list_persons(
+    q: Optional[str] = Query(default=None, max_length=60),
+    country_id: Optional[str] = Query(default=None, max_length=60),
+    sort: str = Query(default="name", max_length=20),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+):                                                        # L12
+
+@router.get("/persons/{person_ref}", response_model=schemas.PersonDetail)
+def get_person(person_ref: str):                          # L25
+
+@router.get("/persons/{person_ref}/results",
+            response_model=schemas.Page[schemas.PersonResultItem])
+def list_person_results(
+    person_ref: str,
+    event_id: Optional[str] = Query(default=None, max_length=10),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+):                                                        # L33
+
+@router.put("/persons/{person_ref}/country", response_model=schemas.PersonDetail)
+def update_person_country(person_ref: str, payload: schemas.PersonCountryUpdate):  # L45
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/routers/rankings.py}}
+
+\noindent\textbf{Path.} \filepath{src/routers/rankings.py}
+\filesize{27}
+\role{Single endpoint for event rankings. Ranks are computed in the data layer
+over the in-scope rows (world, or narrowed by country or continent), with ties
+sharing a rank. Retired events and an invalid \texttt{kind} are rejected by the
+data layer with \texttt{BadInput}.}
+\contents{One \texttt{APIRouter} with \texttt{tags=["rankings"]} and one route
+function.}
+
+\begin{lstlisting}
+@router.get("/rankings/{event_id}", response_model=schemas.Page[schemas.RankingItem])
+def list_rankings(
+    event_id: str,
+    kind: schemas.ResultKind = "single",
+    country_id: Optional[str] = Query(default=None, max_length=60),
+    continent_id: Optional[str] = Query(default=None, max_length=20),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=100, ge=1, le=100),
+):                                                        # L12
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/routers/search.py}}
+
+\noindent\textbf{Path.} \filepath{src/routers/search.py}
+\filesize{14}
+\role{Global header search. One required query string \texttt{q} (1--60
+characters) and a per-group result limit. Returns a grouped payload with
+matching competitions and persons; an all-whitespace query is rejected by the
+data layer.}
+\contents{One \texttt{APIRouter} with \texttt{tags=["search"]} and one route
+function.}
+
+\begin{lstlisting}
+@router.get("/search", response_model=schemas.SearchResults)
+def search(
+    q: str = Query(min_length=1, max_length=60),
+    limit: int = Query(default=5, ge=1, le=20),
+):                                                        # L10
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/routers/stats.py}}
+
+\noindent\textbf{Path.} \filepath{src/routers/stats.py}
+\filesize{29}
+\role{Statistics endpoints backing the stats page: the medal table (gold,
+silver and bronze counts per country from final-round podiums), competitions
+per country per year with an optional year range, and record counts per event
+and record code. All aggregation happens in the data layer, never in the
+router.}
+\contents{One \texttt{APIRouter} with \texttt{tags=["stats"]} and three route
+functions.}
+
+\begin{lstlisting}
+@router.get("/stats/medals", response_model=list[schemas.MedalRow])
+def stats_medals():                                       # L12
+
+@router.get("/stats/competitions-by-country", response_model=list[schemas.CountryYearRow])
+def stats_competitions_by_country(
+    year_from: Optional[int] = Query(default=None, ge=2003, le=2100),
+    year_to: Optional[int] = Query(default=None, ge=2003, le=2100),
+):                                                        # L20
+
+@router.get("/stats/records", response_model=list[schemas.RecordRow])
+def stats_records():                                      # L28
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/schemas.py}}
+
+\noindent\textbf{Path.} \filepath{src/schemas.py}
+\filesize{296}
+\role{Every Pydantic model used at the API edge. Response models pin the exact
+JSON shape each endpoint may return (which is also the confidentiality
+guarantee: confidential fields such as date of birth and email are simply not
+part of any model); request models enforce types, ranges and list lengths before
+the data layer runs. The generic \texttt{Page[T]} wrapper is the shared list
+envelope \texttt{\{items, total, page, page\_size\}}. Five \texttt{Literal}
+aliases define the allowed enum values.}
+\contents{5 type aliases, a \texttt{TypeVar}, and 28 model classes. The file
+defines no functions.}
+
+\begin{lstlisting}
+RegistrationStatus   = Literal["accepted", "waiting_list", "pending", "cancelled", "rejected"]
+CompetitionStatus    = Literal["upcoming", "in_progress", "past", "cancelled"]
+ResultKind           = Literal["single", "average"]
+DelegateStatus       = Literal["senior", "regional", "full", "junior", "trainee"]
+T = TypeVar("T")
+
+class Page(BaseModel, Generic[T]):                        # L14   items, total, page, page_size
+class ErrorBody(BaseModel):                               # L21   detail, code
+class PersonListItem(BaseModel):                          # L29   person_no, wca_id, name, country_id,
+                                                          #       country_name, competitions_count, podiums_count
+class PersonalRecord(BaseModel):                          # L39   event_id, event_name, best, average,
+                                                          #       world_rank, continental_rank, national_rank
+class PersonDetail(BaseModel):                            # L49   person_no, wca_id, name, local_name, gender,
+                                                          #       country_id, country_name, since_date,
+                                                          #       delegate_status, competitions_count,
+                                                          #       podiums_count, personal_records
+class PersonResultItem(BaseModel):                        # L64   result_id, competition_id, competition_name,
+                                                          #       event_id, round_number, position, best,
+                                                          #       average, single_record, average_record,
+                                                          #       country_id, solves
+class EventItem(BaseModel):                               # L79   event_id, event_name, result_kind, status
+class RoundItem(BaseModel):                               # L89   round_number, format_id, format_name,
+                                                          #       per_attempt, cutoff_attempts, cutoff_value,
+                                                          #       adv_type, adv_level, is_dual,
+                                                          #       is_head_to_head, last_day
+class CompetitionEvent(BaseModel):                        # L103  event_id, event_name, result_kind, rounds
+class PersonRef(BaseModel):                               # L110  person_no, name, wca_id
+class PodiumItem(BaseModel):                              # L116  event_id, event_name, position, person_no,
+                                                          #       name, wca_id, country_id, best, average,
+                                                          #       single_record, average_record
+class CompetitionListItem(BaseModel):                     # L130  competition_id, name, city, country_id,
+                                                          #       country_name, continent_id, start_date,
+                                                          #       end_date, status, competitor_limit,
+                                                          #       registered_count, main_event_id,
+                                                          #       championship_type
+class CompetitionDetail(CompetitionListItem):             # L146  + short_name, venue_name, street_address,
+                                                          #       venue_details, latitude, longitude, website,
+                                                          #       opens_at, closes_at, amount, currency_code,
+                                                          #       refund_policy_percent, announced_at,
+                                                          #       cancelled_at, results_posted_at, events,
+                                                          #       delegates, organizers, podiums
+class CompetitionResultItem(BaseModel):                   # L168  result_id, event_id, round_number, position,
+                                                          #       person_no, name, wca_id, country_id, best,
+                                                          #       average, single_record, average_record, solves
+class RankingItem(BaseModel):                             # L187  rank, person_no, name, wca_id, country_id,
+                                                          #       country_name, best, average,
+                                                          #       competition_id, competition_name,
+                                                          #       continental_rank, national_rank
+class SearchCompetition(BaseModel):                       # L202  competition_id, name, city, country_id, start_date
+class SearchPerson(BaseModel):                            # L210  person_no, wca_id, name, country_id
+class SearchResults(BaseModel):                           # L217  competitions, persons
+class CountryItem(BaseModel):                             # L222  country_id, iso2, name, continent_id,
+                                                          #       continent_name
+class MedalRow(BaseModel):                                # L230  country_id, country_name, continent_id,
+                                                          #       gold, silver, bronze, total
+class CountryYearRow(BaseModel):                          # L240  country_id, country_name, year,
+                                                          #       competition_count
+class RecordRow(BaseModel):                               # L247  event_id, event_name, kind, record_code, count
+class RegistrationItem(BaseModel):                        # L258  competition_id, registrant_no, person_no, name,
+                                                          #       wca_id, status, registered_at, guests,
+                                                          #       guardian_consent, events
+class RegistrationStatusPromotion(BaseModel):             # L271  registrant_no, person_no, name
+class RegistrationChange(BaseModel):                      # L277  registration, promoted
+class RegistrationCreate(BaseModel):                      # L285  person_no, events, guests
+class RegistrationStatusUpdate(BaseModel):                # L291  status
+class PersonCountryUpdate(BaseModel):                     # L295  country_id
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/serialization.py}}
+
+\noindent\textbf{Path.} \filepath{src/serialization.py}
+\filesize{18}
+\role{Recursive converter used by \filepath{real.py} before returning anything:
+it walks dicts, lists, tuples and sets, converts \texttt{Decimal} to
+\texttt{float}, \texttt{datetime}/\texttt{date}/\texttt{time} to ISO strings,
+neo4j-style objects via \texttt{to\_native()}, and Mongo \texttt{ObjectId} to
+\texttt{str}, so every response is JSON-safe no matter which driver produced
+it.}
+\contents{One function.}
+
+\begin{lstlisting}
+def to_jsonable(o):                                       # L5
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/tests/test_api.py}}
+
+\noindent\textbf{Path.} \filepath{src/tests/test\_api.py}
+\filesize{229}
+\role{Development-only HTTP tests run through \texttt{TestClient} with
+\texttt{raise\_server\_exceptions=False} so the catch-all 500 handler can be
+asserted. They check that every documented route exists in
+\texttt{/openapi.json}, that reads return 200, that list responses use the
+\texttt{\{items, total, page, page\_size\}} envelope, that errors are always
+\texttt{\{detail, code\}}, that query validation rejects out-of-range values,
+that writes return 201/200/204 (and 404 on a second delete), that blocked
+deletes and country changes surface as readable 409s, that confidential fields
+never leave the API, that unhandled exceptions become the generic 500 shape, and
+that the static frontend is served. The autouse fixture resets the mock before
+each test.}
+\contents{One fixture, 17 test functions and one local helper.}
+
+\begin{lstlisting}
+@pytest.fixture(autouse=True)
+def reset():                                              # L21
+
+def test_every_documented_route_exists():                 # L29
+def test_reads_return_200(url):                           # L76   (parametrized)
+def test_list_envelope_shape():                           # L81
+def test_error_shape_is_detail_and_code():                # L88
+def test_not_found_for_each_resource():                   # L98
+def test_validation_errors_are_flattened_to_one_message():# L110
+def test_query_validation_bounds():                       # L118
+def test_data_layer_errors_are_not_500s():                # L132
+def test_create_returns_201_with_location():              # L138
+def test_create_conflict_and_validation():                # L149
+def test_patch_returns_registration_and_promotion():      # L168
+def test_delete_returns_204_then_404():                   # L179
+def test_delete_blocked_is_409_with_readable_message():   # L185
+def test_update_person_country():                         # L193
+def test_confidential_fields_never_leave_the_api():       # L203
+def test_unhandled_error_returns_500_shape(monkeypatch):  # L211
+    # nested inside test_unhandled_error_returns_500_shape
+    def explode(*_args, **_kwargs):                       # L214
+def test_static_frontend_is_served():                     # L226
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{\filepath{src/tests/test_contract.py}}
+
+\noindent\textbf{Path.} \filepath{src/tests/test\_contract.py}
+\filesize{366}
+\role{Development-only data-layer contract tests. They call \texttt{data.*}
+directly and assert the shapes, pagination bounds, sort whitelisting,
+confidentiality, tie handling, waiting-list promotion, and the
+\texttt{NotFound} / \texttt{Conflict} / \texttt{BadInput} behaviour, so the
+same file can run unchanged against the mock and later against the real layer.
+The autouse fixture resets the mock before every test.}
+\contents{One fixture and 39 test functions grouped by feature: search,
+competitions, results, persons, rankings, lookups, registrations, stats, and
+the four writes.}
+
+\begin{lstlisting}
+@pytest.fixture(autouse=True)
+def reset():                                              # L18
+
+# search
+def test_search_groups_competitions_and_persons():        # L25
+def test_search_by_wca_id_prefix():                       # L31
+def test_search_rejects_empty_query():                    # L36
+def test_search_respects_limit():                         # L41
+def test_search_does_not_treat_like_wildcards_as_patterns():  # L47
+
+# competitions
+def test_list_competitions_shape_and_paging():            # L51
+def test_list_competitions_filters():                     # L62
+def test_list_competitions_rejects_unknown_sort():        # L79
+def test_list_competitions_paging_bounds():               # L84
+def test_competition_detail_has_related_data():           # L91
+def test_competition_detail_never_exposes_confidential_fields():  # L100
+def test_missing_competition_raises_not_found():          # L106
+
+# competition results
+def test_competition_results_tabs():                      # L115
+def test_competition_result_attempts_are_ordered():       # L127
+def test_competition_results_rejects_unknown_tab():       # L134
+
+# persons
+def test_persons_list_shape_and_sorting():                # L139
+def test_persons_filter_by_country_and_query():           # L150
+def test_person_resolves_by_number_and_wca_id():          # L158
+def test_person_detail_never_exposes_confidential_fields():  # L165
+def test_person_personal_records_have_ranks():            # L172
+def test_missing_person_raises_not_found():               # L185
+def test_person_results_for_newcomer_is_empty_not_an_error():  # L192
+
+# rankings
+def test_rankings_order_and_ties():                       # L197
+def test_rankings_filter_by_country():                    # L208
+def test_rankings_reject_retired_event_and_bad_kind():    # L214
+
+# lookups
+def test_countries_and_events():                          # L223
+
+# registrations and stats
+def test_registrations_list_and_filter():                 # L235
+def test_stats_shapes():                                  # L245
+
+# writes
+def test_create_registration_and_selects():               # L261
+def test_create_registration_duplicate_is_conflict():     # L275
+def test_create_registration_validations():               # L280
+def test_status_change_promotes_earliest_waiting_registration():  # L291
+def test_status_change_to_waiting_list_does_not_promote_itself():  # L310
+def test_status_change_without_waiting_list_promotes_nobody():     # L319
+def test_status_change_validations():                     # L324
+def test_delete_registration_removes_selects():           # L333
+def test_delete_registration_blocked_by_results():        # L344
+def test_update_person_country_sets_date():               # L350
+def test_update_person_country_validations():             # L359
+\end{lstlisting}
+
+\end{document}
