@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+import urllib.parse
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -13,11 +14,7 @@ CACHE = ROOT / "cache"
 DATA.mkdir(parents=True, exist_ok=True)
 CACHE.mkdir(parents=True, exist_ok=True)
 API = "https://www.worldcubeassociation.org/api/v0"
-EXPORT_URL = (
-    "https://exports.worldcubeassociation.org/results/"
-    "WCA_export_v2_309_20261105T003022Z.tsv.zip"
-)
-EXPORT_ZIP = CACHE / "wca_export_v2_309_20261105T003022Z.tsv.zip"
+EXPORT_URL = f"{API}/export/public"
 UA = {"User-Agent": "wca-demo-pipeline/1.0"}
 
 SHORTLIST = [
@@ -59,17 +56,18 @@ def _get(url: str, path: Path):
 
 def ensure_export() -> zipfile.ZipFile:
     CACHE.mkdir(parents=True, exist_ok=True)
-    if not EXPORT_ZIP.exists():
-        req = urllib.request.Request(EXPORT_URL, headers=UA)
-        part = EXPORT_ZIP.with_suffix(".zip.part")
+    cached = sorted(CACHE.glob("*.tsv.zip"))
+    if not cached:
+        meta = _get(EXPORT_URL, CACHE / "export.json")
+        req = urllib.request.Request(meta["tsv_url"], headers=UA)
+        part = CACHE / "export.tsv.zip.part"
         with urllib.request.urlopen(req, timeout=1800) as resp, open(part, "wb") as fh:
-            while True:
-                chunk = resp.read(1 << 20)
-                if not chunk:
-                    break
+            for chunk in iter(lambda: resp.read(1 << 20), b""):
                 fh.write(chunk)
-        part.replace(EXPORT_ZIP)
-    return zipfile.ZipFile(EXPORT_ZIP)
+            name = Path(urllib.parse.urlparse(resp.geturl()).path).name
+        part.replace(CACHE / name)
+        cached = [CACHE / name]
+    return zipfile.ZipFile(cached[-1])
 
 
 def export_rows(zf: zipfile.ZipFile, name: str):

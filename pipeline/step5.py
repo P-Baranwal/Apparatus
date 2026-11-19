@@ -19,20 +19,17 @@ from common import (
 CANCELLED = "MohaliCubeOpen2026"
 STATUS_PLAN = {
     "DCHydCubeOpenNovember2026": [
-        ("accepted", 24),
         ("waiting_list", 3),
         ("pending", 1),
         ("cancelled", 1),
         ("rejected", 1),
     ],
     "IndianPBQChampionship2026": [
-        ("accepted", 8),
         ("pending", 1),
         ("cancelled", 1),
         ("rejected", 1),
     ],
     "CubeXWinterOpenBengaluru2026": [
-        ("accepted", 55),
         ("pending", 2),
         ("cancelled", 2),
         ("rejected", 1),
@@ -149,10 +146,11 @@ for cid in UPCOMING:
     closes = parse_ts(comp["Closes_At"])
     start_date = datetime.strptime(comp["Start_Date"], "%Y-%m-%d").date()
     entries = plan[cid]
-    statuses = []
+    tail = []
     for status, amount in STATUS_PLAN[cid]:
-        statuses.extend([status] * amount)
-    assert len(statuses) == len(entries), (cid, len(statuses), len(entries))
+        tail.extend([status] * amount)
+    assert len(tail) <= len(entries), (cid, len(tail), len(entries))
+    statuses = ["accepted"] * (len(entries) - len(tail)) + tail
 
     registration_by_person_no = {}
     for person in wcif(cid)["persons"]:

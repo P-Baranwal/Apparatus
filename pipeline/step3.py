@@ -553,7 +553,7 @@ for role in roles:
     ):
         best_role[wca_id] = role
 
-assert len(best_role) == 766
+assert 500 <= len(best_role) <= 1500, len(best_role)
 senior_by_region = {
     role["group"]["name"]: wca_id
     for wca_id, role in best_role.items()
